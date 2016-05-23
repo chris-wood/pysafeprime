@@ -10,7 +10,7 @@ def _random_in_range(low, high):
         n = int(os.urandom(num_bytes).encode('hex'), 16)
     return n
 
-def random_bit_integer(bits):
+def _random_bit_integer(bits):
     low = (2 ** bits) + 1
     high = (2 ** (bits + 1)) - 1
     return _random_in_range(low, high)
@@ -48,19 +48,19 @@ def is_prime(n, t = 1):
 
 def random_prime(k, t = 1):
     '''
-    Random prime generation algorithm 4.44 from the HAC.
+    Random prime generation algorithm 4.44 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
     '''
     num_trials = 10000
     trial = 0
     while trial < num_trials:
-        n = random_bit_integer(k)
+        n = _random_bit_integer(k)
         if is_prime(n, t):
             return n
         trial += 1
 
 def safe_prime(k, tt = 1):
     '''
-    Safe prime generation algorithm 4.53 from the HAC.
+    Safe prime generation algorithm 4.53 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
     '''
 
     s = random_prime(k, tt)
@@ -90,9 +90,11 @@ def safe_prime(k, tt = 1):
 
     return p
 
+def fast_safe_prime(k, tt = 1):
+    # https://eprint.iacr.org/2003/175.pdf
+    pass
+
 # print is_prime(15, 10)
 # print is_prime(23, 10)
 # print random_prime(100, 100)
 # print safe_prime(100, 100)
-
-# https://eprint.iacr.org/2003/175.pdf
