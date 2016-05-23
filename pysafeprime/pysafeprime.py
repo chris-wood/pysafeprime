@@ -94,6 +94,9 @@ def fast_safe_prime(k, tt = 1):
     # https://eprint.iacr.org/2003/175.pdf
     pass
 
+# TODO: translate t parameter into probability
+# test passes with probability at most (1/4^t) on a composite number
+
 # print is_prime(15, 10)
 # print is_prime(23, 10)
 # print random_prime(100, 100)
