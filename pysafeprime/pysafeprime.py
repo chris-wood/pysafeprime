@@ -15,7 +15,7 @@ def _random_bit_integer(bits):
     high = (2 ** (bits + 1)) - 1
     return _random_in_range(low, high)
 
-def is_prime(n, t = 1):
+def is_prime(n, probability = 0.01):
     '''
     Miller-Rabin primality test algorithm 4.24 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
     '''
@@ -32,7 +32,8 @@ def is_prime(n, t = 1):
 
     assert((2 ** s) * r == (n - 1))
 
-    for i in range(1):
+    num_trials = int(math.log((1 / probability), 4))
+    for i in range(num_trials):
         a = _random_in_range(2, n - 2)
         y = pow(a, r, n)
         if y != 1 and y != (n - 1):
@@ -44,33 +45,38 @@ def is_prime(n, t = 1):
                 j = j + 1
             if y != (n - 1):
                 return False
+
     return True
 
-def random_prime(k, t = 1):
+def random_prime(k, probability = 0.01):
     '''
     Random prime generation algorithm 4.44 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
     '''
-    num_trials = 10000
+    
+    num_trials = 1000
+
     trial = 0
     while trial < num_trials:
         n = _random_bit_integer(k)
-        if is_prime(n, t):
+        if is_prime(n, probability):
             return n
         trial += 1
 
-def safe_prime(k, tt = 1):
+    raise "Could not generate a random prime"
+
+def safe_prime(k, probability = 0.01):
     '''
     Safe prime generation algorithm 4.53 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
     '''
 
-    s = random_prime(k, tt)
-    t = random_prime(k, tt)
+    s = random_prime(k, probability)
+    t = random_prime(k, probability)
 
     i = 1
     q = 0
     while q == 0:
         qt = (2 * i * t) + 1
-        if is_prime(qt, tt):
+        if is_prime(qt, probability):
             q = qt
         i += 1
 
@@ -82,7 +88,7 @@ def safe_prime(k, tt = 1):
     q = 0
     while q == 0:
         qt = p0 + (2 * j * r * s)
-        if is_prime(qt, tt):
+        if is_prime(qt, probability):
             q = qt
         j += 1
 
@@ -90,14 +96,14 @@ def safe_prime(k, tt = 1):
 
     return p
 
-def fast_safe_prime(k, tt = 1):
+def fast_safe_prime(k, probability = 0.01):
     # https://eprint.iacr.org/2003/175.pdf
     pass
 
 # TODO: translate t parameter into probability
 # test passes with probability at most (1/4^t) on a composite number
 
-# print is_prime(15, 10)
-# print is_prime(23, 10)
-# print random_prime(100, 100)
-# print safe_prime(100, 100)
+print is_prime(15, 0.01)
+print is_prime(23, 0.01)
+print random_prime(100, 0.01)
+print safe_prime(100, 0.01)
