@@ -3,7 +3,7 @@ import os
 import math
 import struct
 
-def random(low, high):
+def _random_in_range(low, high):
     num_bytes = (int(math.log(high, 2)) / 8) + 1
     n = int(os.urandom(num_bytes).encode('hex'), 16)
     while n < low or n > high:
@@ -13,7 +13,7 @@ def random(low, high):
 def random_bit_integer(bits):
     low = (2 ** bits) + 1
     high = (2 ** (bits + 1)) - 1
-    return random(low, high) 
+    return _random_in_range(low, high)
 
 def is_prime(n, t = 1):
     '''
@@ -33,7 +33,7 @@ def is_prime(n, t = 1):
     assert((2 ** s) * r == (n - 1))
 
     for i in range(1):
-        a = random(2, n - 2)
+        a = _random_in_range(2, n - 2)
         y = pow(a, r, n)
         if y != 1 and y != (n - 1):
             j = 1
@@ -59,7 +59,7 @@ def random_prime(k, t = 1):
         trial += 1
 
 def safe_prime(k, tt = 1):
-    ''' 
+    '''
     Safe prime generation algorithm 4.53 from the HAC.
     '''
 
@@ -73,9 +73,9 @@ def safe_prime(k, tt = 1):
         if is_prime(qt, tt):
             q = qt
         i += 1
-    
+
     r = q
-    
+
     p0 = (2 * (pow(s, r - 2, r)) * s) - 1
 
     j = 1
@@ -90,12 +90,9 @@ def safe_prime(k, tt = 1):
 
     return p
 
-print is_prime(15, 10)
-print is_prime(23, 10)
-
-print random_prime(100, 100)
-
-print safe_prime(100, 100)
-
+# print is_prime(15, 10)
+# print is_prime(23, 10)
+# print random_prime(100, 100)
+# print safe_prime(100, 100)
 
 # https://eprint.iacr.org/2003/175.pdf
