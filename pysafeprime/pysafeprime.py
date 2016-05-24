@@ -112,14 +112,18 @@ def safe_prime(k, probability = 0.01):
     return p
 
 def fast_safe_prime(k, probability = 0.01):
+    ''' 
+    Quickly generate safe primes using the method of:
+        https://eprint.iacr.org/2003/175.pdf
+    This function will block until it finds a suitable prime.
+    '''
     def prime_filter(p):
         return p % 4 == 3
     while True:
         p = random_prime_with_filter(k, prime_filter, probability)
-        return p
-
-    # https://eprint.iacr.org/2003/175.pdf
-    pass
+        
+        if is_prime((2 * p) + 1, probability) or is_prime((p - 1) / 2, probability):
+            return p
 
 # TODO: translate t parameter into probability
 # test passes with probability at most (1/4^t) on a composite number
@@ -128,3 +132,4 @@ print is_prime(15, 0.01)
 print is_prime(23, 0.01)
 print random_prime(100, 0.01)
 print safe_prime(100, 0.01)
+print fast_safe_prime(100, 0.01)
