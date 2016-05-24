@@ -4,21 +4,48 @@ import math
 import struct
 
 def _random_in_range(low, high):
+    """Generate a random integer within some finite range.
+
+    Args:
+        low: The minimum value in the range.
+        high: The maximum value in the range.
+
+    Returns:
+        A random integer in the range [low, high].
+    """
+
     num_bytes = (int(math.log(high, 2)) / 8) + 1
     n = int(os.urandom(num_bytes).encode('hex'), 16)
     while n < low or n > high:
         n = int(os.urandom(num_bytes).encode('hex'), 16)
     return n
 
-def _random_bit_integer(bits):
-    low = (2 ** bits) + 1
-    high = (2 ** (bits + 1)) - 1
+def _random_bit_integer(k):
+    """Generate a random k-bit integer.
+    
+    Args:
+        k: The number of bits in the integer.
+    Returns:
+        A random k-bit integer.
+    """
+
+    low = (2 ** k) + 1
+    high = (2 ** (k + 1)) - 1
     return _random_in_range(low, high)
 
 def is_prime(n, probability = 0.01):
-    '''
-    Miller-Rabin primality test algorithm 4.24 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
-    '''
+    """Miller-Rabin primality test. 
+    
+    This code is implemented using algorithm 4.24 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
+    
+    Args:
+        n: The integer whose primality is in question.
+        probability: The probability that the result is correct.
+
+    Returns:
+        True if n is prime with the specified probability.
+        False otherwise.
+    """
 
     if n % 2 == 0:
         return False
