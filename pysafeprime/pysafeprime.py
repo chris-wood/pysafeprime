@@ -40,10 +40,10 @@ def is_prime(n, probability = 0.01):
     
     Args:
         n: The integer whose primality is in question.
-        probability: The probability that the result is correct.
+        probability: The probability that the result is incorrect.
 
     Returns:
-        True if n is prime with the specified probability.
+        True if n is prime prob. (1 - probability).
         False otherwise.
     """
 
@@ -76,9 +76,17 @@ def is_prime(n, probability = 0.01):
     return True
 
 def random_prime(k, probability = 0.01):
-    '''
-    Random prime generation algorithm 4.44 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
-    '''
+    """Generate a random k-bit prime.
+
+    Create a random prime according to algorithm 4.44 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
+
+    Args:
+        k: The number of bits in the prime.
+        probability: The probability that the number is composite.
+
+    Returns:
+        An integer that is prime with probability (1 - probability)
+    """
     
     num_trials = 1000
 
@@ -92,9 +100,21 @@ def random_prime(k, probability = 0.01):
     raise "Could not generate a random prime"
 
 def random_prime_with_filter(k, condition, probability = 0.01):
-    '''
-    Return a random prime p that satisfies some condition, e.g., p = 3 mod 4
-    '''
+    """Return a random k-bit prime that meets some criteria.
+
+    Use a condition function to filter the prime result. For example,
+    the function might be 
+        lambda p : p % 4 == 3
+    to check that the prime p = 3 mod 4. 
+
+    Args:
+        k: The number of bits in the prime.
+        condition: The function to filter the prime result
+        probability: The probability that the number is composite.
+
+    Returns:
+        An integer n that is prime with prob. (1 - probability) and meets the condition function. 
+    """
 
     num_trials = 1000
 
@@ -107,9 +127,17 @@ def random_prime_with_filter(k, condition, probability = 0.01):
     raise "Could not generate a random prime that meets the criteria"
 
 def safe_prime(k, probability = 0.01):
-    '''
-    Safe prime generation algorithm 4.53 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
-    '''
+    """Generate a 2k-bit prime.
+
+    Generate a safe prime using algorithm 4.53 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
+
+    Args:
+        k: Half the number of bits in the result.
+        probability: The probability that the result is composite.
+
+    Returns:
+        A safe prime of length 2k bits that is incorrect with the given probability.
+    """
 
     s = random_prime(k, probability)
     t = random_prime(k, probability)
@@ -139,11 +167,19 @@ def safe_prime(k, probability = 0.01):
     return p
 
 def fast_safe_prime(k, probability = 0.01):
-    ''' 
+    """ Quickly generate a k-bit safe prime.
+
     Quickly generate safe primes using the method of:
         https://eprint.iacr.org/2003/175.pdf
     This function will block until it finds a suitable prime.
-    '''
+
+    Args:
+        k: The number of bits in the result.
+        probability: The probability that the result is composite.
+
+    Returns: 
+        A safe prime of length k bits that is incorrect with the given probability.
+    """
     def prime_filter(p):
         return p % 4 == 3
     while True:
@@ -152,11 +188,3 @@ def fast_safe_prime(k, probability = 0.01):
         if is_prime((2 * p) + 1, probability) or is_prime((p - 1) / 2, probability):
             return p
 
-# TODO: translate t parameter into probability
-# test passes with probability at most (1/4^t) on a composite number
-
-print is_prime(15, 0.01)
-print is_prime(23, 0.01)
-print random_prime(100, 0.01)
-print safe_prime(100, 0.01)
-print fast_safe_prime(100, 0.01)
