@@ -64,6 +64,21 @@ def random_prime(k, probability = 0.01):
 
     raise "Could not generate a random prime"
 
+def random_prime_with_filter(k, condition, probability = 0.01):
+    '''
+    Return a random prime p that satisfies some condition, e.g., p = 3 mod 4
+    '''
+
+    num_trials = 1000
+
+    trial = 0
+    while trial < num_trials:
+        p = random_prime(k, probability)
+        if condition(p):
+            return p
+        trial += 1
+    raise "Could not generate a random prime that meets the criteria"
+
 def safe_prime(k, probability = 0.01):
     '''
     Safe prime generation algorithm 4.53 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
@@ -97,6 +112,12 @@ def safe_prime(k, probability = 0.01):
     return p
 
 def fast_safe_prime(k, probability = 0.01):
+    def prime_filter(p):
+        return p % 4 == 3
+    while True:
+        p = random_prime_with_filter(k, prime_filter, probability)
+        return p
+
     # https://eprint.iacr.org/2003/175.pdf
     pass
 
