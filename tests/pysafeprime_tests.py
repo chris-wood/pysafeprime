@@ -8,7 +8,6 @@ from pysafeprime import random_prime
 from pysafeprime import safe_prime
 
 def test_is_prime_small():
-    print random_prime(1024)
     assert is_prime(15) == False
     assert is_prime(23) == True
     assert is_prime(2) == False
