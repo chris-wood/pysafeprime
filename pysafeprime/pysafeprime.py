@@ -78,7 +78,7 @@ def is_prime(n, probability = 0.01):
 
     return True
 
-def random_prime(k, probability = 0.01):
+def random_prime(k, probability = 0.01, num_trials=0):
     """Generate a random k-bit prime.
 
     Create a random prime according to algorithm 4.44 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
@@ -91,14 +91,13 @@ def random_prime(k, probability = 0.01):
         An integer that is prime with probability (1 - probability)
     """
     
-    num_trials = 10000
-
     trial = 0
     while trial < num_trials:
         n = _random_bit_integer(k)
         if is_prime(n, probability):
             return n
-        trial += 1
+        if num_trials > 0:
+            trial += 1
 
     raise "Could not generate a random prime"
 
