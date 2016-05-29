@@ -29,8 +29,8 @@ def _random_bit_integer(k):
         A random k-bit integer.
     """
 
-    low = (2 ** k) + 1
-    high = (2 ** (k + 1)) - 1
+    low = (2 ** (k - 1)) + 1
+    high = (2 ** k) - 1
     return _random_in_range(low, high)
 
 def is_prime(n, probability = 0.01):
@@ -46,6 +46,9 @@ def is_prime(n, probability = 0.01):
         True if n is prime prob. (1 - probability).
         False otherwise.
     """
+
+    if n == 2:
+        return True
 
     if n % 2 == 0:
         return False
@@ -88,7 +91,7 @@ def random_prime(k, probability = 0.01):
         An integer that is prime with probability (1 - probability)
     """
     
-    num_trials = 1000
+    num_trials = 10000
 
     trial = 0
     while trial < num_trials:
@@ -188,3 +191,16 @@ def fast_safe_prime(k, probability = 0.01):
         if is_prime((2 * p) + 1, probability) or is_prime((p - 1) / 2, probability):
             return p
 
+def fast_safe_prime_2(k, probability = 0.01):
+    """Quickly generate a safe prime.
+
+    Use the algorithm outlined in https://eprint.iacr.org/2003/186.pdf.
+
+    Args:
+        k: The number of bits in the result.
+        probability: The probability that the result is composite.
+
+    Returns: 
+        A safe prime of length k bits that is incorrect with the given probability.
+    """
+    pass
