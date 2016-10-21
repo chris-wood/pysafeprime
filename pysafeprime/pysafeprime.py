@@ -33,7 +33,7 @@ def _random_bit_integer(k):
     high = (2 ** k) - 1
     return _random_in_range(low, high)
 
-def is_prime(n, probability = 0.01):
+def is_prime_rabin(n, probability = 0.01):
     """Miller-Rabin primality test. 
     
     This code is implemented using algorithm 4.24 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
@@ -95,7 +95,7 @@ def random_prime(k, probability = 0.01, num_trials = 0):
     trial = 0
     while trial < num_trials or block:
         n = _random_bit_integer(k)
-        if is_prime(n, probability):
+        if is_prime_rabin(n, probability):
             return n
         trial += 1
 
@@ -148,7 +148,7 @@ def safe_prime(k, probability = 0.01):
     q = 0
     while q == 0:
         qt = (2 * i * t) + 1
-        if is_prime(qt, probability):
+        if is_prime_rabin(qt, probability):
             q = qt
         i += 1
 
@@ -160,7 +160,7 @@ def safe_prime(k, probability = 0.01):
     q = 0
     while q == 0:
         qt = p0 + (2 * j * r * s)
-        if is_prime(qt, probability):
+        if is_prime_rabin(qt, probability):
             q = qt
         j += 1
 
@@ -187,7 +187,7 @@ def fast_safe_prime(k, probability = 0.01):
     while True:
         p = random_prime_with_filter(k, prime_filter, probability)
         
-        if is_prime((2 * p) + 1, probability) or is_prime((p - 1) / 2, probability):
+        if is_prime_rabin((2 * p) + 1, probability) or is_prime((p - 1) / 2, probability):
             return p
 
 def fast_safe_prime_2(k, probability = 0.01):
