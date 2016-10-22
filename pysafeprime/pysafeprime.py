@@ -136,27 +136,26 @@ def random_prime(k, block = False):
     return random_prime_with_filter(k, lambda p : True, block)
 
 
-def safe_prime(k, probability = 0.01):
+def safe_prime(k):
     """Generate a 2k-bit prime.
 
     Generate a safe prime using algorithm 4.53 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
 
     Args:
         k: Half the number of bits in the result.
-        probability: The probability that the result is composite.
 
     Returns:
         A safe prime of length 2k bits that is incorrect with the given probability.
     """
 
-    s = random_prime(k, probability)
-    t = random_prime(k, probability)
+    s = random_prime(k)
+    t = random_prime(k)
 
     i = 1
     q = 0
     while q == 0:
         qt = (2 * i * t) + 1
-        if is_prime_rabin(qt, probability):
+        if is_prime_rabin(qt):
             q = qt
         i += 1
 
@@ -168,7 +167,7 @@ def safe_prime(k, probability = 0.01):
     q = 0
     while q == 0:
         qt = p0 + (2 * j * r * s)
-        if is_prime_rabin(qt, probability):
+        if is_prime_rabin(qt):
             q = qt
         j += 1
 

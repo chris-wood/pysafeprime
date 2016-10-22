@@ -15,9 +15,6 @@ def test_is_prime_small():
     assert is_prime(23) == True
     assert is_prime(2) == True
 
-def test_is_prime_large():
-    assert False
-
 def test_random_prime_512():
     p = random_prime(512)
     assert bit_length(p) == 512
