@@ -33,17 +33,19 @@ def _random_bit_integer(k):
     high = (2 ** k) - 1
     return _random_in_range(low, high)
 
-def is_prime_rabin(n, probability = 0.01):
+def is_prime_rabin(n, t = 40):
     """Miller-Rabin primality test. 
     
     This code is implemented using algorithm 4.24 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
+
+    XXX: provide a better explanation of that value
     
     Args:
         n: The integer whose primality is in question.
-        probability: The probability that the result is incorrect.
+        t: The security parameter. 
 
     Returns:
-        True if n is prime prob. (1 - probability).
+        True if n is deemed prime upon t iterations of the core algorithm.
         False otherwise.
     """
 
@@ -62,8 +64,8 @@ def is_prime_rabin(n, probability = 0.01):
 
     assert((2 ** s) * r == (n - 1))
 
-    num_trials = int(math.log((1 / probability), 4))
-    for i in range(num_trials):
+    #num_trials = int(math.log((1 / probability), 4))
+    for i in range(t):
         a = _random_in_range(2, n - 2)
         y = pow(a, r, n)
         if y != 1 and y != (n - 1):
@@ -78,30 +80,10 @@ def is_prime_rabin(n, probability = 0.01):
 
     return True
 
-def random_prime(k, probability = 0.01, num_trials = 0):
-    """Generate a random k-bit prime.
+def is_prime(p):
+    return is_prime_rabin(p)
 
-    Create a random prime according to algorithm 4.44 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
-
-    Args:
-        k: The number of bits in the prime.
-        probability: The probability that the number is composite.
-
-    Returns:
-        An integer that is prime with probability (1 - probability)
-    """
-    
-    block = num_trials == 0
-    trial = 0
-    while trial < num_trials or block:
-        n = _random_bit_integer(k)
-        if is_prime_rabin(n, probability):
-            return n
-        trial += 1
-
-    raise Exception("Could not generate a random prime")
-
-def random_prime_with_filter(k, condition, probability = 0.01):
+def random_prime_with_filter(k, condition, block = False):
     """Return a random k-bit prime that meets some criteria.
 
     Use a condition function to filter the prime result. For example,
@@ -109,24 +91,50 @@ def random_prime_with_filter(k, condition, probability = 0.01):
         lambda p : p % 4 == 3
     to check that the prime p = 3 mod 4. 
 
+    We bound the number of iterations by 100k since we expect to find
+    approximately one in every 0.7k numbers is prime. The constant 100
+    gives us a large enough cushion to make this correct with overwhelming
+    probability. For example, if k = 4096, then one in every ~2,867 numbers 
+    is prime, and between 2^k and 2^{k+1} - 1 (inclusive) there is a *massive*
+    amount of numbers.
+
+    If block = true, then this will block until it definitely finds a prime. 
+
     Args:
         k: The number of bits in the prime.
-        condition: The function to filter the prime result
-        probability: The probability that the number is composite.
+        condition: The function to filter the prime result.
+        block: A flag to indicate that the iteration bound should not be used.
 
     Returns:
-        An integer n that is prime with prob. (1 - probability) and meets the condition function. 
+        An integer n that is (probabilistically) prime and satisfies the given condition.
     """
 
-    num_trials = 1000
-
     trial = 0
-    while trial < num_trials:
-        p = random_prime(k, probability)
-        if condition(p):
+    num_trials = 100 * k
+    while trial < num_trials or block:
+        p = _random_bit_integer(k)
+        if is_prime_rabin(p) and condition(p):
             return p
         trial += 1
+
     raise Exception("Could not generate a random prime that meets the criteria")
+
+def random_prime(k, block = False):
+    """Generate a random k-bit prime.
+
+    Create a random prime according to algorithm 4.44 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
+
+
+    Args:
+        k: The number of bits in the prime.
+        block: A flag to indicate that the iteration bound should not be used.
+
+    Returns:
+        An integer that is probabilistically prime. 
+    """
+    
+    return random_prime_with_filter(k, lambda p : True, block)
+
 
 def safe_prime(k, probability = 0.01):
     """Generate a 2k-bit prime.
@@ -168,7 +176,7 @@ def safe_prime(k, probability = 0.01):
 
     return p
 
-def fast_safe_prime(k, probability = 0.01):
+def fast_safe_prime(k):
     """ Quickly generate a k-bit safe prime.
 
     Quickly generate safe primes using the method of:
@@ -177,27 +185,25 @@ def fast_safe_prime(k, probability = 0.01):
 
     Args:
         k: The number of bits in the result.
-        probability: The probability that the result is composite.
 
     Returns: 
         A safe prime of length k bits that is incorrect with the given probability.
     """
-    def prime_filter(p):
-        return p % 4 == 3
+    prime_filter = lambda p : p % 4 == 3
+
     while True:
-        p = random_prime_with_filter(k, prime_filter, probability)
+        p = random_prime_with_filter(k, prime_filter)
         
-        if is_prime_rabin((2 * p) + 1, probability) or is_prime((p - 1) / 2, probability):
+        if is_prime_rabin((2 * p) + 1): 
             return p
 
-def fast_safe_prime_2(k, probability = 0.01):
+def fast_safe_prime_2(k):
     """Quickly generate a safe prime.
 
     Use the algorithm outlined in https://eprint.iacr.org/2003/186.pdf.
 
     Args:
         k: The number of bits in the result.
-        probability: The probability that the result is composite.
 
     Returns: 
         A safe prime of length k bits that is incorrect with the given probability.
