@@ -19,9 +19,9 @@ def test_random_prime_512():
     p = random_prime(512)
     assert bit_length(p) == 512
 
-#def test_random_prime_1024():
-#    p = random_prime(1024)
-#    assert bit_length(p) == 1024
+def test_random_prime_1024():
+    p = random_prime(1024)
+    assert bit_length(p) == 1024
 
 #def test_random_prime_2048():
 #    p = random_prime(2048)

@@ -137,7 +137,7 @@ def random_prime(k, block = False):
 
 
 def safe_prime(k):
-    """Generate a 2k-bit prime.
+    """Generate a 2k-bit prime using Gordon's algorithm.
 
     Generate a safe prime using algorithm 4.53 from the HAC (http://cacr.uwaterloo.ca/hac/about/chap4.pdf).
 
@@ -158,7 +158,6 @@ def safe_prime(k):
         if is_prime_rabin(qt):
             q = qt
         i += 1
-
     r = q
 
     p0 = (2 * (pow(s, r - 2, r)) * s) - 1
@@ -170,7 +169,6 @@ def safe_prime(k):
         if is_prime_rabin(qt):
             q = qt
         j += 1
-
     p = q
 
     return p
